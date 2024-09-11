@@ -1,19 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>HTML5 Canvas</title>
-  <link rel="icon" href="https://fav.farm/🔥" />
+    <meta charset="UTF-8">
+    <title>HTML5 Canvas</title>
+    <link rel="icon" href="https://fav.farm/🔥"/>
 </head>
 <body>
 <canvas id="draw" width="800" height="800"></canvas>
 <script>
+    const canvas = document.querySelector('#draw');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    let hue = 0;
+
+    function setStrokeStyle() {
+        hue = (++hue) % 360;
+        ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+    }
+
+    ctx.width = 1;
+    let dir = 1;
+
+    function setLineWidth() {
+        ctx.lineWidth = ctx.lineWidth + dir;
+        if (ctx.lineWidth >= 60 || ctx.lineWidth <= 1) {
+            dir = -dir;
+        }
+    }
+
+    let lastX = 0, lastY = 0;
+
+    function draw(mouseMoveEvent) {
+        console.log(mouseMoveEvent);
+        setStrokeStyle();
+        setLineWidth();
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        [lastX, lastY] = [mouseMoveEvent.offsetX, mouseMoveEvent.offsetY]
+        ctx.lineTo(mouseMoveEvent.offsetX, mouseMoveEvent.offsetY);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    function startDraw(mouseDownEvent) {
+        [lastX, lastY] = [mouseDownEvent.offsetX, mouseDownEvent.offsetY];
+        canvas.addEventListener('mousemove', draw);
+    }
+
+    function stopDraw(mouseEvent) {
+        canvas.removeEventListener('mousemove', draw);
+    }
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mouseup', stopDraw);
+    canvas.addEventListener('mouseout', stopDraw);
 </script>
 
 <style>
-  html, body {
-    margin: 0;
-  }
+    html, body {
+        margin: 0;
+    }
 </style>
 
 </body>

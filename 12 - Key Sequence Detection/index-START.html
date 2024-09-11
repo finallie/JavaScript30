@@ -7,6 +7,22 @@
     <link rel="icon" href="https://fav.farm/🔥" />
   </head>
   <body>
-    <script></script>
+    <script>
+      const password = 'secret';
+      let input = [];
+
+      function handleKeyup(e) {
+        console.log(e);
+        input.push(e.key);
+        if (input.length > password.length) {
+          input.unshift();
+        }
+        if (input.join('') === password) {
+          cornify_add();
+        }
+      }
+
+      window.addEventListener('keyup', handleKeyup);
+    </script>
   </body>
 </html>

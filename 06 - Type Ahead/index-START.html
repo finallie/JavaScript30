@@ -1,22 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Type Ahead 👀</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="https://fav.farm/🔥" />
+    <meta charset="UTF-8">
+    <title>Type Ahead 👀</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="https://fav.farm/🔥"/>
 </head>
 <body>
 
-  <form class="search-form">
+<form class="search-form">
     <input type="text" class="search" placeholder="City or State">
     <ul class="suggestions">
-      <li>Filter for a city</li>
-      <li>or a state</li>
+        <li>Filter for a city</li>
+        <li>or a state</li>
     </ul>
-  </form>
+</form>
 <script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+    const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+    let data = [];
+    fetch(endpoint)
+        .then(resp => resp.json())
+        .then(json => data = json);
+
+    const searchInput = document.querySelector('input.search');
+    const suggestionList = document.querySelector('ul.suggestions');
+
+    function display(event) {
+        const searchWord = this.value;
+        const regExp = new RegExp(searchWord, 'gi');
+        const filterArray = data.filter(e => regExp.test(e.city) || regExp.test(e.state));
+        const html = filterArray.map(e => {
+            const city = e.city.replace(regExp, `<span class="hl">${searchWord}</span>`);
+            const state = e.state.replace(regExp, `<span class="hl">${searchWord}</span>`);
+            return `
+                <li>
+                    <span class="name">${city}, ${state}</span>
+                    <span class="population">${(+(e.population)).toLocaleString()}</span>
+                </li>
+            `
+        }).join('');
+        suggestionList.innerHTML = html;
+    }
+
+    searchInput.addEventListener('keyup', display);
 
 </script>
 </body>
